@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Table, select } from 'reactabular';
+import "./main.scss"
 
 const rows = [
   {
