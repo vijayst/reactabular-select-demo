@@ -54,6 +54,19 @@ export default class App extends React.Component {
       super();
       this.onRow = this.onRow.bind(this);
       this.onSelectRow = this.onSelectRow.bind(this);
+      this.handleIdChange = this.handleIdChange.bind(this);
+      
+      // Add ID column
+      columns.push({
+        property: 'id',
+        header: {
+          label: 'Select'
+        },
+        cell: {
+          format: this.renderId.bind(this)
+        }
+      });
+
       this.state = {
         rows,
         columns
@@ -64,38 +77,87 @@ export default class App extends React.Component {
       console.log('on row');
       return {
         className: row.selected && 'selected-row',
-        onClick: () => this.onSelectRow(rowIndex)
+        onClick: () => this.onSelectRow(row, rowIndex)
       };
     }
 
-    onSelectRow(selectedRowIndex) {
+    onSelectRow(row, rowIndex) {
       const { rows } = this.state;
+      const { id, name, age } = row;
       console.log('select row');
-      this.setState(
-        select.row({
-          rows,
-          selectedRowId: rows[selectedRowIndex].id
-        })
+      this.setState({
+        id,
+        name,
+        age,
+        rowNumber: rowIndex + 1
+      });
+    }
+
+    handleIdChange() {
+
+    }
+
+    renderId(value) {
+      return (
+        <input
+          key={value}
+          name="id"
+          type="checkbox"
+          value={value}
+          onChange={this.handleIdChange}
+        />
       );
     }
 
     render() {
-      const { rows, columns, selectedRow } = this.state;
-      console.log('render', rows);
+      const { rows, columns, id, name, age, rowNumber } = this.state;
+
+      if (rowNumber) {
+        select.row({
+          rows,
+          selectedRowId: rows[rowNumber - 1].id
+        });
+      }
+
       return (
-        <Table.Provider
-          className="pure-table pure-table-striped"
-          columns={columns}
-        >
-          <Table.Header />
+        <div>
+          <h2>Detail</h2>
+          {rowNumber ? (
+            <div>
+              <div>
+                <div>ID</div>
+                <div>{id}</div>
+              </div>
+              <br />
+              <div>
+                <div>Name</div>
+                <div>{name}</div>
+              </div>
+              <br />
+              <div>
+                <div>Age</div>
+                <div>{age}</div>
+              </div>
+            </div>
+          ) : (
+            <div>Please select a row to view detail</div>
+          )}
+          <hr />
+          <h2>List</h2>
+          <Table.Provider
+            className="pure-table pure-table-striped"
+            columns={columns}
+          >
+            <Table.Header />
 
-          <Table.Body
-            rows={rows}
-            rowKey="id"
-            onRow={this.onRow}
-          />
+            <Table.Body
+              rows={rows}
+              rowKey="id"
+              onRow={this.onRow}
+            />
 
-        </Table.Provider>
+          </Table.Provider>
+        </div>
       );
     }
 }
