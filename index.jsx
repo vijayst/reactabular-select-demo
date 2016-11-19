@@ -55,7 +55,7 @@ export default class App extends React.Component {
       this.onRow = this.onRow.bind(this);
       this.onSelectRow = this.onSelectRow.bind(this);
       this.handleIdChange = this.handleIdChange.bind(this);
-      
+
       // Add ID column
       columns.push({
         property: 'id',
@@ -111,12 +111,13 @@ export default class App extends React.Component {
 
     render() {
       const { rows, columns, id, name, age, rowNumber } = this.state;
-
+      let selectedRows = rows;
       if (rowNumber) {
-        select.row({
+        const selection = select.row({
           rows,
           selectedRowId: rows[rowNumber - 1].id
         });
+        selectedRows = selection.rows;
       }
 
       return (
@@ -151,7 +152,7 @@ export default class App extends React.Component {
             <Table.Header />
 
             <Table.Body
-              rows={rows}
+              rows={selectedRows}
               rowKey="id"
               onRow={this.onRow}
             />
